@@ -1,0 +1,116 @@
+@page "/Auth/Login"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@using Microsoft.AspNetCore.Components.Authorization
+@using WebClient.Components.Layout
+@using WebClient.Services.Api
+@using WebClient.Services.Common
+@using WebClient.Services.Components
+@inject AuthService AuthService
+@inject ToastService ToastService
+@inject NavigationManager NavManager
+@layout AuthLayout
+@inject IJSRuntime Js
+@inject IBaseService BaseService
+@inject IHttpClientFactory ClientFactory
+@inject HttpClient SelfHttp
+@rendermode InteractiveServer
+
+<!-- لود کردن فایل استایل انیمیشن -->
+<link href="css/LoginAnimationStyle.css" rel="stylesheet"/>
+
+<div class="hero bg-base-200 min-h-screen" id="loginPage">
+    <div class="hero-content flex-col lg:flex-row-reverse">
+        <!-- بخش متن سمت راست -->
+        <div class="text-center lg:text-left">
+            <h1 class="text-5xl font-bold">ورود به سامانه</h1>
+            <p class="py-6">
+                لطفا نام کاربری و رمز عبور خود را وارد کنید تا وارد داشبورد شوید.
+            </p>
+        </div>
+
+        <!-- کارت لاگین -->
+        <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+            <div class="card-body">
+                <fieldset class="fieldset">
+                    <label class="label">نام کاربری</label>
+                    <input @bind="_userName" type="text" class="input input-bordered" placeholder="نام کاربری"/>
+
+                    <label class="label">رمز عبور</label>
+                    <input @bind="_password" type="password" class="input input-bordered" placeholder="رمز عبور"/>
+
+                    <div class="mt-2">
+                        <a @onclick="GoToForgotPassword" class="link link-hover text-sm cursor-pointer">
+                            فراموشی رمز عبور؟
+                        </a>
+                    </div>
+
+                    <LoadingBtn ButtonText="ورود" IsLoading="_isBusy" OnClick="LoginAsync"
+                                CssClass="btn-primary mt-4 w-full"></LoadingBtn>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string _userName = "";
+    private string _password = "";
+    private bool _isBusy;
+    string? returnUrl;
+
+    protected override void OnInitialized()
+    {
+        var uri = new Uri(NavManager.Uri);
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+        if (query.TryGetValue(nameof(returnUrl), out var value))
+        {
+            returnUrl = value;
+        }
+
+        SelfHttp.BaseAddress = new Uri(NavManager.BaseUri);
+    }
+
+    private async Task LoginAsync()
+    {
+        try
+        {
+            _isBusy = true;
+            var result = await AuthService.LoginAsync(_userName, _password);
+
+            if (result)
+            {
+                NavManager.NavigateTo($"/auth/SignIn?jwtToken={AuthService.Token}", forceLoad: true);
+            }
+            else
+            {
+                _isBusy = true;
+            }
+        }
+        catch
+        {
+            ToastService.ShowError("خطا در ورود. لطفاً دوباره تلاش کنید.");
+            _isBusy = true;
+        }
+    }
+
+    private async Task GoToForgotPassword()
+    {
+        // اجرای انیمیشن
+        await Js.InvokeVoidAsync("eval", "document.getElementById('loginPage').classList.add('page-transition');");
+        // صبر برای پایان انیمیشن
+        await Task.Delay(600);
+        // ریدایرکت
+        NavManager.NavigateTo("/Auth/ForgotPassword");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Js.InvokeVoidAsync("localStorage.clear");
+        }
+    }
+
+}

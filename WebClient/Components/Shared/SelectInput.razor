@@ -1,0 +1,87 @@
+@using Common
+@typeparam TValue
+
+<div>
+    <button type="button" class="select" popovertarget="@_popoverId" style="anchor-name:@_anchorName">
+        @BtnText
+    </button>
+
+    <ul class="dropdown menu min-w-52 rounded-box bg-base-100 shadow-sm"
+        popover id="@_popoverId" style="position-anchor:@_anchorName">
+        <input type="text" class="input focus:outline-none"
+               placeholder="جستجو ..." @bind="_searchText" @bind:event="oninput"/>
+
+        @foreach (var item in Options.Where(i => MatchesSearch(i.Title)))
+        {
+            TValue itemValue;
+
+            if (typeof(TValue).IsEnum)
+                itemValue = (TValue)Enum.ToObject(typeof(TValue), item.Id);
+            else
+                itemValue = (TValue)Convert.ChangeType(item.Id, typeof(TValue));
+            <li>
+                <a class="flex justify-between" @onclick="() => SelectAsync((TValue)item.Id, item.Title)"
+                   disabled="@item.Disabled">
+                    <span>@item.Title</span>
+                    @if (EqualityComparer<TValue>.Default.Equals(itemValue, Value))
+                    {
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                            <path fill-rule="evenodd"
+                                  d="M12.416 3.376a.75.75 0 0 1 .208 1.04l-5 7.5a.75.75 0 0 1-1.154.114l-3-3a.75.75 0 0 1 1.06-1.06l2.353 2.353 4.493-6.74a.75.75 0 0 1 1.04-.207Z"
+                                  clip-rule="evenodd"/>
+                        </svg>
+                    }
+                </a>
+            </li>
+        }
+    </ul>
+</div>
+
+@code {
+    [Parameter] public TValue Value { get; set; } = default!;
+    [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
+    [Parameter] public List<SelectDto> Options { get; set; } = [];
+    [Parameter] public string BtnText { get; set; } = "انتخاب کنید ...";
+
+    private string _searchText = "";
+    private readonly string _popoverId = $"popover-{Guid.NewGuid()}";
+    private readonly string _anchorName = $"--anchor-{Guid.NewGuid()}";
+
+
+    protected override void OnParametersSet()
+    {
+        foreach (var item in Options)
+        {
+            object itemValue;
+
+            if (typeof(TValue).IsEnum)
+                itemValue = Enum.ToObject(typeof(TValue), item.Id);
+            else
+                itemValue = Convert.ChangeType(item.Id, typeof(TValue));
+
+            if (EqualityComparer<TValue>.Default.Equals((TValue)itemValue, Value))
+            {
+                BtnText = item.Title;
+                break;
+            }
+        }
+    }
+
+    public async Task SelectAsync(TValue value, string text)
+    {
+        Value = value;
+        BtnText = text;
+        await ValueChanged.InvokeAsync(value);
+    }
+
+    public void SetBtnText(string text)
+    {
+        BtnText = text;
+    }
+
+    public bool MatchesSearch(string text)
+    {
+        return string.IsNullOrWhiteSpace(_searchText) || text.Contains(_searchText, StringComparison.OrdinalIgnoreCase);
+    }
+
+}

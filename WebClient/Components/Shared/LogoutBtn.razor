@@ -1,0 +1,15 @@
+@inject NavigationManager NavManager
+@rendermode InteractiveServer
+<a class="w-full text-left" @onclick="Logout">
+    خروج از حساب کاربری
+</a>
+
+@code {
+
+    private void Logout()
+    {
+        NavManager.NavigateTo("/auth/signout", true);
+        
+    }
+
+}

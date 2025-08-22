@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="lofi">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <base href="/"/>
+    <link rel="stylesheet" href="@Assets["app.css"]"/>
+    <link rel="stylesheet" href="@Assets["lib/jalalidatepicker/jalalidatepicker.min.css"]"/>
+    <link rel="stylesheet" href="@Assets["WebClient.styles.css"]"/>
+    <ImportMap/>
+    <link rel="icon" type="image/png" href="favicon.png"/>
+    <HeadOutlet/>
+</head>
+
+<body>
+<Routes/>
+<script src="_framework/blazor.web.js"></script>
+<script src="@Assets["js/titleHelper.js"]"></script>
+<script src="@Assets["lib/jalalidatepicker/jalalidatepicker.min.js"]"></script>
+<script src="@Assets["js/app.js"]"></script>
+<script>
+          document.getElementById("Logout").addEventListener("click", function() {
+          window.location.href = "/Auth/Login";
+        });
+</script>
+</body>
+
+</html>

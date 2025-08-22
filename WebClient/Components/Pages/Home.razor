@@ -1,0 +1,29 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<PageTitle>داشبورد</PageTitle>
+
+<div>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        @for (var i = 0; i < 4; i++)
+        {
+            <div style="background: linear-gradient(to bottom, #ffffff, #f9f9f9)"
+                 class="bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm card">
+                <div
+                    class="card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6">
+                    <div data-slot="card-description" class="text-muted-foreground text-sm">Total Revenue</div>
+                    <div data-slot="card-title" class="text-2xl font-semibold tabular-nums [250px]/card:text-3xl">
+                        $1,250.00
+                    </div>
+                </div>
+                <div class="flex px-6 flex-col items-start gap-1.5 text-sm">
+                    <div class="line-clamp-1 flex gap-2 font-medium">Trending up this month
+                    </div>
+                    <div class="text-muted-foreground">Visitors for the last 6 months</div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
