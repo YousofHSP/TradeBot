@@ -38,6 +38,10 @@ public class User : IdentityUser<int>, IBaseEntity<int>, IHashedEntity, ISoftDel
     [IgnoreDataMember] public List<SmsLog> ReceivedSms { get; set; }
     [IgnoreDataMember] public List<Notification> Notifications { get; set; }
 
+    [IgnoreDataMember] public ICollection<Transaction> Transactions { get; set; } = [];
+    [IgnoreDataMember] public ICollection<DepositUser> DepositUsers { get; set; } = [];
+
+
     #region CreatedModels
 
     [IgnoreDataMember] public List<Audit> Audits { get; set; }
@@ -57,6 +61,7 @@ public class User : IdentityUser<int>, IBaseEntity<int>, IHashedEntity, ISoftDel
     [IgnoreDataMember] public List<SubSystemConfiguration> CreatedSubSystemConfigurations { get; set; }
     [IgnoreDataMember] public List<ImportedRecord> CreatedImportedRecords { get; set; }
     [IgnoreDataMember] public List<ImportedFile> CreatedImportedFiles { get; set; }
+
     #endregion
 }
 
@@ -170,6 +175,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasMany(i => i.CreatedImportedFiles)
             .WithOne(i => i.CreatorUser)
             .HasForeignKey(i => i.CreatorUserId);
+
         #endregion
     }
 }

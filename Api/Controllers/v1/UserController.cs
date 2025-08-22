@@ -40,6 +40,7 @@ public class UserController(
     IRepository<ApiToken> apiTokenRepository,
     IRepository<Notification> notificationRepository,
     IRepository<SubSystem> subSystemRepository,
+    IRepository<Transaction> transactionRepository,
     IHubContext<AppHub> hubContext,
     IHashEntityValidator hashEntityValidator,
     IUploadedFileService uploadedFileService,
@@ -878,4 +879,39 @@ public class UserController(
         }
         return Ok(permissions);
     }
+    
+    [HttpPost("[action]")]
+    public async Task<ApiResult> AccountCharge(AccountChargeDto dto, CancellationToken cancellationToken)
+    {
+        var user = await _userManager.FindByIdAsync(dto.UserId.ToString());
+        if (user == null)
+            throw new NotFoundException("کاربر پیدا نشد");
+        if (dto.Type is TransactionType.Decrease or TransactionType.Deposit)
+        {
+            var transactions = await transactionRepository.TableNoTracking.Where(i => i.UserId == user.Id)
+                .ToListAsync(cancellationToken);
+            var userBalance = transactions
+                                  .Where(i => i.Type is TransactionType.Increase or TransactionType.EndDeposit)
+                                  .Sum(i => i.Amount) -
+                              transactions
+                                  .Where(i => i.Type is TransactionType.Decrease or TransactionType.Deposit)
+                                  .Sum(i => i.Amount);
+            if (dto.Amount > userBalance)
+                throw new AppException(ApiResultStatusCode.PaymentRequired, "موجودی کاربر کافی نیست");
+        }
+            
+        
+
+
+        var transaction = new Transaction
+        {
+            UserId = user.Id,
+            Type = dto.Type,
+            Amount = dto.Amount
+        };
+        await transactionRepository.AddAsync(transaction, cancellationToken);
+
+        return Ok();
+    }
+
 }

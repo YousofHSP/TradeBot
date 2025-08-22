@@ -1,6 +1,7 @@
 using Api.DataInitializer;
 using Common;
 using Common.Utilities;
+using CryptoExchange.Net.Authentication;
 using Data.Contracts;
 using Data.Repositories;
 using Data.Reprositories;
@@ -14,6 +15,7 @@ using NLog;
 using NLog.Web;
 using Service.Auth;
 using Service.DataInitializer;
+using Service.Exchange;
 using Service.Hubs;
 using Service.Message;
 using Service.Model;
@@ -49,7 +51,7 @@ try
     builder.Services.AddDbContext(builder.Configuration);
     builder.Services.AddMemoryCache();
     // builder.Services.AddHangfireConfigurations(builder.Configuration);
-    
+
     builder.Services.AddCustomIdentity(siteSettings.IdentitySettings);
 
     builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -64,8 +66,8 @@ try
     builder.Services.AddScoped<IEmailService, SmtpEmailService>();
     builder.Services.AddScoped<IMessageService, KavehNegarMessageService>();
     builder.Services.AddScoped<INotificationService, NotificationService>();
-    
-    
+
+
     builder.Services.AddScoped<IDataInitializer, ProvinceDataInitializer>();
     builder.Services.AddScoped<IDataInitializer, RoleDataInitializer>();
     builder.Services.AddScoped<IDataInitializer, UserDataInitializer>();
@@ -74,11 +76,20 @@ try
     builder.Services.AddScoped<IDataInitializer, LogCategoryDataInitializer>();
     builder.Services.AddScoped<IDataInitializer, SubSystemConfigurationDataInitializer>();
     
-    
+    builder.Services.AddScoped<IExchange, BingXExchange>();
+
+
+    builder.Services.AddBingX(options =>
+    {
+        options.ApiCredentials = new ApiCredentials(
+            "XUnyzKy7ABQyrOsYxDZxOX3CL4AUBJTu4MYNW3n5ljlveHHsriftHs40M9I3qkbvF9EKsxen0c2PiZAsoDQ",
+            "Lfxdc556KwbOVLkXCPclfvlnchxchf9HvRAvqIUC51e2Fgm7Fj9KSMSEIYdafn2Cg0OBjrH22uXSFSBGw5Q");
+    });
+
     builder.Services.AddScoped<IHashEntityValidator, HashEntityValidator>();
-    
+
     builder.Services.AddJwtAuthentication();
-    
+
     builder.Logging.ClearProviders();
     builder.Host.UseNLog(new NLogAspNetCoreOptions
     {
@@ -91,31 +102,30 @@ try
     builder.Services.AddCustomApiVersioning();
     builder.Services.AddCorsService();
     builder.Services.AddSignalR();
-    
-    builder.Services.AddHttpClient("KavehNegar", client =>
-    {
-        client.BaseAddress = new Uri("https://api.kavenegar.com/v1/");
-    });
-    
+
+    builder.Services.AddHttpClient("KavehNegar",
+        client => { client.BaseAddress = new Uri("https://api.kavenegar.com/v1/"); });
+
     var app = builder.Build();
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
     }
+
     app.Use(async (context, next) =>
     {
         var ip = context.Connection.RemoteIpAddress?.ToString() ?? "";
         var userAgent = context.Request.Headers["User-Agent"].ToString();
         var requestId = context.TraceIdentifier;
         var physicalPath = context?.Request.Path ?? "";
-    
+
         ScopeContext.PushProperty("ipAddress", ip);
         ScopeContext.PushProperty("userAgent", userAgent);
         ScopeContext.PushProperty("requestId", requestId);
         ScopeContext.PushProperty("physicalPath", physicalPath);
-    
-    
+
+
         await next();
     });
 
@@ -132,10 +142,10 @@ try
         var userName = context.User.Identity.IsAuthenticated
             ? context.User.Identity.GetUserName()
             : "Anonymous";
-    
+
         ScopeContext.PushProperty("userName", userName);
-    
-    
+
+
         await next();
     });
 

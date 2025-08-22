@@ -9,6 +9,7 @@
     <ItemGroup>
         <PackageReference Include="ClosedXML" Version="0.105.0" />
         <PackageReference Include="DocX" Version="4.0.25105.5786" />
+        <PackageReference Include="JK.BingX.Net" Version="1.21.0" />
         <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.13.1" />
     </ItemGroup>
