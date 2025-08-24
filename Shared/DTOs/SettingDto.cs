@@ -101,6 +101,8 @@ namespace Shared.DTOs
         [Display(Name = "حداکثر ارتفاع عکس")]
         MaxImageHeight,
         [Display(Name = "نمایش زیرسیستم")]
-        ShowSubSystem
+        ShowSubSystem,
+        [Display(Name = "درصد محاسبه")]
+        Percent,
     }
 }

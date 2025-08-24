@@ -7,7 +7,6 @@ using Data.Repositories;
 using Data.Reprositories;
 using Domain.Auth;
 using Domain.DTOs.CustomMapping;
-using Domain.Entities;
 using Domain.Message;
 using Domain.Model;
 using Microsoft.AspNetCore.Mvc.Authorization;

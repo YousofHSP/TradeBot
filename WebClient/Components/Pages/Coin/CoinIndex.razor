@@ -1,0 +1,59 @@
+@page "/Coin/Index"
+@rendermode InteractiveServer
+
+
+<PageTitle>ارزها</PageTitle>
+
+<DeleteWarning OnClick="Delete"></DeleteWarning>
+
+@if (_isLoading)
+{
+    <LoadingList/>
+}
+else
+{
+    <div class="flex gap-3">
+        <label class="input">
+            <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <g
+                    stroke-linejoin="round"
+                    stroke-linecap="round"
+                    stroke-width="2.5"
+                    fill="none"
+                    stroke="currentColor"
+                >
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.3-4.3"></path>
+                </g>
+            </svg>
+            <input type="search" @oninput="OnSearchChanged" required placeholder="جسنجو"/>
+        </label>
+    </div>
+
+    <div class="grid grid-cols-4 gap-3 mt-3">
+        @foreach (var item in _list)
+        {
+            <div class="card w-96 bg-base-100 card-md shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title">@item.Name</h2>
+                    <p>@item.Currency</p>
+                    <p>@item.FullName</p>
+                    <p>@item.LoseLimit</p>
+                    <p>@item.ProfitLimit</p>
+                    <div class="justify-end card-actions">
+                        <button class="btn btn-error" @onclick="() => ShowDeleteWarning(item.Id)">حذف</button>
+                    </div>
+                </div>
+            </div>
+        }
+
+
+    </div>
+    <hr class="my-3" />
+    <div class="grid grid-cols-4 gap-3 ">
+        @foreach (var item in _notStoredlist)
+        {
+            <NotStoredCoin Item="item" Done="GetData"/>
+        }
+    </div>
+}

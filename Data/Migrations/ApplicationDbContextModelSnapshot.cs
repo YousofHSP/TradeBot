@@ -293,6 +293,127 @@ namespace Data.Migrations
                     b.ToTable("Cities", "rad");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Coin", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("CreatorUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("LoseLimit")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("ProfitLimit")
+                        .HasColumnType("real");
+
+                    b.Property<DateTimeOffset>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorUserId");
+
+                    b.HasIndex("Currency")
+                        .IsUnique();
+
+                    b.ToTable("Coins", "rad");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Deposit", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("CreatorUserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("EndAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTimeOffset?>("EndDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<decimal>("StartAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTimeOffset>("StartDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorUserId");
+
+                    b.ToTable("Deposits", "rad");
+                });
+
+            modelBuilder.Entity("Domain.Entities.DepositUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("CreatorUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DepositId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("EndAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("StartAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTimeOffset>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorUserId");
+
+                    b.HasIndex("DepositId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("DepositUsers", "rad");
+                });
+
             modelBuilder.Entity("Domain.Entities.EmailHistory", b =>
                 {
                     b.Property<int>("Id")
@@ -339,182 +460,6 @@ namespace Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("EmailHistories", "rad");
-                });
-
-            modelBuilder.Entity("Domain.Entities.FollowShape", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTimeOffset>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("CreatorUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset?>("DeleteDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("FollowShapeKindId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatorUserId");
-
-                    b.HasIndex("FollowShapeKindId");
-
-                    b.ToTable("FollowShapes", "rad");
-                });
-
-            modelBuilder.Entity("Domain.Entities.FollowShapeKind", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTimeOffset>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("CreatorUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset?>("DeleteDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("Kind")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTimeOffset>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatorUserId");
-
-                    b.ToTable("FollowShapeKinds", "rad");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Form", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Address")
-                        .HasMaxLength(300)
-                        .HasColumnType("nvarchar(300)");
-
-                    b.Property<DateTimeOffset>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("CreatorUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset?>("DeleteDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("Details")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("FormMaker")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FormTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Library")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<DateTimeOffset>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<decimal>("Version")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatorUserId");
-
-                    b.HasIndex("FormTypeId");
-
-                    b.ToTable("Forms", "rad");
-                });
-
-            modelBuilder.Entity("Domain.Entities.FormType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTimeOffset>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("CreatorUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset?>("DeleteDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatorUserId");
-
-                    b.ToTable("FormTypes", "rad");
                 });
 
             modelBuilder.Entity("Domain.Entities.ImportedFile", b =>
@@ -806,6 +751,44 @@ namespace Data.Migrations
                     b.ToTable("Notifications", "rad");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("CreatorUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("DepositId")
+                        .HasColumnType("int");
+
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorUserId");
+
+                    b.HasIndex("Currency");
+
+                    b.HasIndex("DepositId");
+
+                    b.ToTable("Orders", "rad");
+                });
+
             modelBuilder.Entity("Domain.Entities.PasswordHistory", b =>
                 {
                     b.Property<int>("Id")
@@ -893,43 +876,6 @@ namespace Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("PhoneNumberHistories", "rad");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ProjectKind", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTimeOffset>("CreateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("CreatorUserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset?>("DeleteDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("UpdateDate")
-                        .HasColumnType("datetimeoffset");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatorUserId");
-
-                    b.ToTable("ProjectKinds", "rad");
                 });
 
             modelBuilder.Entity("Domain.Entities.Province", b =>
@@ -1177,6 +1123,41 @@ namespace Data.Migrations
                     b.HasIndex("SubSystemId");
 
                     b.ToTable("SubSystemConfigurations", "rad");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Transaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTimeOffset>("CreateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("CreatorUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("UpdateDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorUserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Transactions", "rad");
                 });
 
             modelBuilder.Entity("Domain.Entities.UploadedFile", b =>
@@ -1629,6 +1610,55 @@ namespace Data.Migrations
                     b.Navigation("Province");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Coin", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "CreatorUser")
+                        .WithMany()
+                        .HasForeignKey("CreatorUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatorUser");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Deposit", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "CreatorUser")
+                        .WithMany()
+                        .HasForeignKey("CreatorUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatorUser");
+                });
+
+            modelBuilder.Entity("Domain.Entities.DepositUser", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "CreatorUser")
+                        .WithMany()
+                        .HasForeignKey("CreatorUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Deposit", "Deposit")
+                        .WithMany("DepositUsers")
+                        .HasForeignKey("DepositId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany("DepositUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatorUser");
+
+                    b.Navigation("Deposit");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.EmailHistory", b =>
                 {
                     b.HasOne("Domain.Entities.User", "CreatorUser")
@@ -1646,66 +1676,6 @@ namespace Data.Migrations
                     b.Navigation("CreatorUser");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Domain.Entities.FollowShape", b =>
-                {
-                    b.HasOne("Domain.Entities.User", "CreatorUser")
-                        .WithMany("CreatedFollowShapes")
-                        .HasForeignKey("CreatorUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.FollowShapeKind", "FollowShapeKind")
-                        .WithMany("FollowShapes")
-                        .HasForeignKey("FollowShapeKindId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CreatorUser");
-
-                    b.Navigation("FollowShapeKind");
-                });
-
-            modelBuilder.Entity("Domain.Entities.FollowShapeKind", b =>
-                {
-                    b.HasOne("Domain.Entities.User", "CreatorUser")
-                        .WithMany("CreatedFollowShapeKinds")
-                        .HasForeignKey("CreatorUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CreatorUser");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Form", b =>
-                {
-                    b.HasOne("Domain.Entities.User", "CreatorUser")
-                        .WithMany("CreatedForms")
-                        .HasForeignKey("CreatorUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.FormType", "FormType")
-                        .WithMany("Froms")
-                        .HasForeignKey("FormTypeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CreatorUser");
-
-                    b.Navigation("FormType");
-                });
-
-            modelBuilder.Entity("Domain.Entities.FormType", b =>
-                {
-                    b.HasOne("Domain.Entities.User", "CreatorUser")
-                        .WithMany("CreatedFormTypes")
-                        .HasForeignKey("CreatorUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CreatorUser");
                 });
 
             modelBuilder.Entity("Domain.Entities.ImportedFile", b =>
@@ -1787,6 +1757,32 @@ namespace Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Order", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "CreatorUser")
+                        .WithMany()
+                        .HasForeignKey("CreatorUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Coin", "Coin")
+                        .WithMany("Orders")
+                        .HasForeignKey("Currency")
+                        .HasPrincipalKey("Currency")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Deposit", "Deposit")
+                        .WithMany("Orders")
+                        .HasForeignKey("DepositId");
+
+                    b.Navigation("Coin");
+
+                    b.Navigation("CreatorUser");
+
+                    b.Navigation("Deposit");
+                });
+
             modelBuilder.Entity("Domain.Entities.PasswordHistory", b =>
                 {
                     b.HasOne("Domain.Entities.User", "CreatorUser")
@@ -1823,17 +1819,6 @@ namespace Data.Migrations
                     b.Navigation("CreatorUser");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ProjectKind", b =>
-                {
-                    b.HasOne("Domain.Entities.User", "CreatorUser")
-                        .WithMany("CreatedProjectKinds")
-                        .HasForeignKey("CreatorUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("CreatorUser");
                 });
 
             modelBuilder.Entity("Domain.Entities.SmsLog", b =>
@@ -1895,6 +1880,25 @@ namespace Data.Migrations
                     b.Navigation("CreatorUser");
 
                     b.Navigation("SubSystem");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Transaction", b =>
+                {
+                    b.HasOne("Domain.Entities.User", "CreatorUser")
+                        .WithMany()
+                        .HasForeignKey("CreatorUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.User", "User")
+                        .WithMany("Transactions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CreatorUser");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Domain.Entities.UploadedFile", b =>
@@ -2029,14 +2033,16 @@ namespace Data.Migrations
                     b.Navigation("SubSystems");
                 });
 
-            modelBuilder.Entity("Domain.Entities.FollowShapeKind", b =>
+            modelBuilder.Entity("Domain.Entities.Coin", b =>
                 {
-                    b.Navigation("FollowShapes");
+                    b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("Domain.Entities.FormType", b =>
+            modelBuilder.Entity("Domain.Entities.Deposit", b =>
                 {
-                    b.Navigation("Froms");
+                    b.Navigation("DepositUsers");
+
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("Domain.Entities.ImportedFile", b =>
@@ -2077,14 +2083,6 @@ namespace Data.Migrations
 
                     b.Navigation("CreatedEmailHistories");
 
-                    b.Navigation("CreatedFollowShapeKinds");
-
-                    b.Navigation("CreatedFollowShapes");
-
-                    b.Navigation("CreatedFormTypes");
-
-                    b.Navigation("CreatedForms");
-
                     b.Navigation("CreatedImportedFiles");
 
                     b.Navigation("CreatedImportedRecords");
@@ -2099,8 +2097,6 @@ namespace Data.Migrations
 
                     b.Navigation("CreatedPhoneNumberHistories");
 
-                    b.Navigation("CreatedProjectKinds");
-
                     b.Navigation("CreatedSmsLogs");
 
                     b.Navigation("CreatedSubSystemConfigurations");
@@ -2110,6 +2106,8 @@ namespace Data.Migrations
                     b.Navigation("CreatedUploadedFiles");
 
                     b.Navigation("CreatedUserGroups");
+
+                    b.Navigation("DepositUsers");
 
                     b.Navigation("EmailHistories");
 
@@ -2124,6 +2122,8 @@ namespace Data.Migrations
                     b.Navigation("ReceivedSms");
 
                     b.Navigation("SubSystems");
+
+                    b.Navigation("Transactions");
                 });
 #pragma warning restore 612, 618
         }

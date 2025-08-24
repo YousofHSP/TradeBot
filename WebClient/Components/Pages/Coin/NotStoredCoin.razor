@@ -1,0 +1,46 @@
+@using Common.Utilities
+@using global::Shared.DTOs
+@using WebClient.Services.Common
+@using WebClient.Services.Components
+
+<div class="card w-96 bg-base-100 card-md shadow-sm">
+    <div class="card-body">
+        <h2 class="card-title">@Item.Name</h2>
+        <fieldset class="fieldset w-full">
+            <legend class="fieldset-legend">@(ModelExtensions.ToDisplay<CoinDto>(i => i.ProfitLimit))</legend>
+            <InputNumber @bind-Value="_data.ProfitLimit" class="input"/>
+        </fieldset>
+        <fieldset class="fieldset w-full">
+            <legend class="fieldset-legend">@(ModelExtensions.ToDisplay<CoinDto>(i => i.LoseLimit))</legend>
+            <InputNumber @bind-Value="_data.LoseLimit" class="input"/>
+        </fieldset>
+        <div class="justify-end card-actions">
+            <LoadingBtn ButtonText="افزودن" IsLoading="_isBusy" OnClick="Add"></LoadingBtn>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private CoinDto _data = new();
+    private bool _isBusy = false;
+    [Parameter] public CoinResDto Item { get; set; }
+    [Parameter] public EventCallback Done { get; set; }
+    [Inject] public IBaseService BaseService { get; set; }
+    [Inject] public ToastService ToastService { get; set; }
+
+    private async Task Add()
+    {
+        _data.Currency = Item.Currency;
+        _isBusy = true;
+        var result = await BaseService.Post<CoinDto, CoinResDto>("v1/Coin/Create", _data);
+        if (result is not null)
+        {
+            ToastService.ShowSuccess("افزوده شد");
+        }
+
+        _isBusy = false;
+        await Done.InvokeAsync();
+    }
+
+}

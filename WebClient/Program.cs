@@ -18,7 +18,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddControllers();
 builder.Services.AddHttpClient<IBaseService, BaseService>(client =>
 {
-    client.BaseAddress = new Uri("http://localhost:8083/api/");
+    client.BaseAddress = new Uri("https://localhost:7064/api/");
 });
 
 

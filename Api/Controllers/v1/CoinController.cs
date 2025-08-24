@@ -3,11 +3,13 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Common;
 using Common.Exceptions;
+using Common.Utilities;
 using Data.Contracts;
 using Domain.Entities;
 using Domain.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Service.Exchange;
 using Shared;
@@ -48,13 +50,21 @@ public class CoinController(
         return Ok(dto);
     }
 
-    [HttpGet("[action]")]
-    public async Task<ApiResult<List<CoinResDto>>> GetNotStored(string? currency, CancellationToken ct)
+    [HttpPost("[action]")]
+    public async Task<ApiResult<IndexResDto<CoinResDto>>> GetNotStored([FromBody]IndexDto dto, CancellationToken ct)
     {
-        var list = await exchange.GetCoins(currency, ct);
+        var list = await exchange.GetCoins(dto.Search, ct);
         var storedList = await repository.TableNoTracking.ToListAsync(ct);
         list = list.Where(i => storedList.All(c => i.Id != c.Id)).ToList();
-        return Ok(list);
+        var total = list.Count;
+        return Ok(new IndexResDto<CoinResDto>
+        {
+            Data = list,
+            Total = total,
+            Limit = total,
+            Page = 1,
+            Details = new()
+        });
     }
 
     [HttpPost("Create")]
@@ -69,6 +79,8 @@ public class CoinController(
         var model = exchangeCoin.ToEntity(mapper);
         model.LoseLimit = dto.LoseLimit;
         model.ProfitLimit = dto.ProfitLimit;
+        var userId = User.Identity!.GetUserId<int>();
+        model.CreatorUserId = userId;
         await repository.AddAsync(model, cancellationToken);
 
         return CoinResDto.FromEntity(model, mapper);

@@ -74,6 +74,8 @@ namespace Service.DataInitializer
                     return ".jpg,.png";
                 case (SettingKey.AppName):
                     return "سامانه سرآمد";
+                case (SettingKey.Percent):
+                    return "30";
                 case (SettingKey.AppLogo):
                     return "https://api.radtender.local/logo.png";
 

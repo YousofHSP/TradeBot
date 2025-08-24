@@ -53,31 +53,19 @@ public static class Permissions
         
         /////////////////////////////////
         
-        new() { Controller = "ProjectKind", Action = "Index", ControllerLabel = "نوع پروژه", ActionLabel = "نمایش" },
-        new() { Controller = "ProjectKind", Action = "Create", ControllerLabel = "نوع پروژه", ActionLabel = "ایجاد" },
-        new() { Controller = "ProjectKind", Action = "Update", ControllerLabel = "نوع پروژه", ActionLabel = "ویرایش" },
-        new() { Controller = "ProjectKind", Action = "Delete", ControllerLabel = "نوع پروژه", ActionLabel = "حذف" },
+        new() { Controller = "Coin", Action = "Index", ControllerLabel = "ارز", ActionLabel = "نمایش" },
+        new() { Controller = "Coin", Action = "Create", ControllerLabel = "ارز", ActionLabel = "ایجاد" },
+        new() { Controller = "Coin", Action = "Update", ControllerLabel = "ارز", ActionLabel = "ویرایش" },
+        new() { Controller = "Coin", Action = "Delete", ControllerLabel = "ارز", ActionLabel = "حذف" },
+        new() { Controller = "Coin", Action = "GetNotStored", ControllerLabel = "ارز", ActionLabel = "ارز های ثبت نشده" },
+        new() { Controller = "Coin", Action = "But", ControllerLabel = "ارز", ActionLabel = "خرید" },
         
-        new() { Controller = "FormType", Action = "Index", ControllerLabel = "نوع فرم", ActionLabel = "نمایش" },
-        new() { Controller = "FormType", Action = "Create", ControllerLabel = "نوع فرم", ActionLabel = "ایجاد" },
-        new() { Controller = "FormType", Action = "Update", ControllerLabel = "نوع فرم", ActionLabel = "ویرایش" },
-        new() { Controller = "FormType", Action = "Delete", ControllerLabel = "نوع فرم", ActionLabel = "حذف" },
+        new() { Controller = "Deposit", Action = "Get", ControllerLabel = "سرمایه گذاری", ActionLabel = "نمایش" },
+        new() { Controller = "Deposit", Action = "GetDepositUsers", ControllerLabel = "سرمایه گذاری", ActionLabel = "کاربران" },
         
-        new() { Controller = "Form", Action = "Index", ControllerLabel = " فرم", ActionLabel = "نمایش" },
-        new() { Controller = "Form", Action = "Create", ControllerLabel = "فرم", ActionLabel = "ایجاد" },
-        new() { Controller = "Form", Action = "Update", ControllerLabel = "فرم", ActionLabel = "ویرایش" },
-        new() { Controller = "Form", Action = "Delete", ControllerLabel = "فرم", ActionLabel = "حذف" },
-        
-        new() { Controller = "FollowShapeKind", Action = "Index", ControllerLabel = "نوع فرآیند", ActionLabel = "نمایش" },
-        new() { Controller = "FollowShapeKind", Action = "Create", ControllerLabel = "نوع فرآیند", ActionLabel = "ایجاد" },
-        new() { Controller = "FollowShapeKind", Action = "Update", ControllerLabel = "نوع فرآیند", ActionLabel = "ویرایش" },
-        new() { Controller = "FollowShapeKind", Action = "Delete", ControllerLabel = "نوع فرآیند", ActionLabel = "حذف" },
-        
-        new() { Controller = "FollowShape", Action = "Index", ControllerLabel = "فرآیند", ActionLabel = "نمایش" },
-        new() { Controller = "FollowShape", Action = "Create", ControllerLabel = "فرآیند", ActionLabel = "ایجاد" },
-        new() { Controller = "FollowShape", Action = "Update", ControllerLabel = "فرآیند", ActionLabel = "ویرایش" },
-        new() { Controller = "FollowShape", Action = "Delete", ControllerLabel = "فرآیند", ActionLabel = "حذف" },
-        
+        new() { Controller = "Transaction", Action = "Get", ControllerLabel = "تراکنش", ActionLabel = "نمایش" },
+        new() { Controller = "Transaction", Action = "StartDeposit", ControllerLabel = "تراکنش", ActionLabel = "شروع سرمایه گذاری" },
+        new() { Controller = "Transaction", Action = "EndDeposit", ControllerLabel = "تراکنش", ActionLabel = "پایان سرمایه گذاری" },
     ];
 
     public static bool AreValidPermissions(IEnumerable<string> permissions)
