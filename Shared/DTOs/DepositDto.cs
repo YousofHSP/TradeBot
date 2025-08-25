@@ -1,4 +1,6 @@
-﻿using AutoMapper;
+﻿using System.ComponentModel.DataAnnotations;
+using AutoMapper;
+using Common.Utilities;
 using Domain.Entities;
 
 namespace Shared.DTOs;
@@ -11,23 +13,14 @@ public class DepositDto: BaseDto<DepositDto, Deposit>
 public class DepositResDto: BaseDto<DepositResDto, Deposit>
 {
 
-    public string StartDate { get; set; }
-    public string EndDate { get; set; }
+    [Display(Name = "تاریخ شروع")]
+    public DateTimeOffset StartDate { get; set; }
+    [Display(Name = "تاریخ پایان")]
+    public DateTimeOffset? EndDate { get; set; }
+    
+    [Display(Name = "مبلغ شروع")]
     public decimal StartAmount { get; set; }
+    [Display(Name = "مبلغ پایان")]
     public decimal EndAmount { get; set; }
 
-    protected override void CustomMappings(IMappingExpression<Deposit, DepositResDto> mapping)
-    {
-        mapping
-            .ForMember(
-                i => i.StartDate,
-                s => s.MapFrom(source => source.StartDate.ToString())
-            );
-        mapping
-            .ForMember(
-                i => i.EndDate,
-                s => s.MapFrom(source => source.EndDate.ToString())
-            );
-        base.CustomMappings(mapping);
-    }
 }

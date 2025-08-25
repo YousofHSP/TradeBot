@@ -17,19 +17,34 @@ public class DepositController(
     IRepository<Deposit> repository, 
     IMapper mapper,
     IRepository<DepositUser> depositUserRepository)
-    : BaseController
+    : BaseController 
 {
-    [HttpGet]
-    public async Task<ApiResult<List<DepositResDto>>> Get(CancellationToken ct)
+    [HttpPost("[action]")]
+    public async Task<ApiResult<IndexResDto<DepositResDto>>> Index(IndexDto dto, CancellationToken ct)
     {
-        var result = await repository.TableNoTracking
+        dto.Page = Math.Max(1, dto.Page);
+        dto.Limit = Math.Max(10, dto.Limit);
+        var query = repository.TableNoTracking
+            .AsQueryable();
+        
+        var total = await query.CountAsync(ct);
+        var list = await query
+            .Skip((dto.Page - 1) * dto.Limit)
+            .Take(dto.Limit)
             .ProjectTo<DepositResDto>(mapper.ConfigurationProvider)
             .ToListAsync(ct);
-        return Ok(result);
+        return Ok(new IndexResDto<DepositResDto>
+        {
+            Total = total,
+            Data = list,
+            Page = dto.Page,
+            Limit = dto.Limit,
+            Details = new()
+        });
     }
 
     [HttpGet("[action]")]
-    public async Task<ApiResult<List<DepositUserResDto>>> GetDepositUsers(int depositId, CancellationToken ct)
+    public async Task<ApiResult<List<DepositUserResDto>>> GetDepositUsers([FromQuery]int depositId, CancellationToken ct)
     {
         var result = await depositUserRepository
             .TableNoTracking

@@ -60,7 +60,7 @@ public static class Permissions
         new() { Controller = "Coin", Action = "GetNotStored", ControllerLabel = "ارز", ActionLabel = "ارز های ثبت نشده" },
         new() { Controller = "Coin", Action = "But", ControllerLabel = "ارز", ActionLabel = "خرید" },
         
-        new() { Controller = "Deposit", Action = "Get", ControllerLabel = "سرمایه گذاری", ActionLabel = "نمایش" },
+        new() { Controller = "Deposit", Action = "Index", ControllerLabel = "سرمایه گذاری", ActionLabel = "نمایش" },
         new() { Controller = "Deposit", Action = "GetDepositUsers", ControllerLabel = "سرمایه گذاری", ActionLabel = "کاربران" },
         
         new() { Controller = "Transaction", Action = "Get", ControllerLabel = "تراکنش", ActionLabel = "نمایش" },

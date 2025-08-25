@@ -1,0 +1,104 @@
+@page "/Deposit/Index"
+@using Common.Utilities
+@using DocumentFormat.OpenXml.Wordprocessing
+@using global::Shared.DTOs
+@rendermode InteractiveServer
+
+
+<PageTitle>سپرده</PageTitle>
+
+<dialog class="modal" id="dataModal">
+    <div class="modal-box w-11/12 max-w-5xl">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute left-2 top-2">✕</button>
+        </form>
+        <h3 class="text-lg font-bold">@_modalTitle</h3>
+
+        @if (_modalIsBusy)
+        {
+            <LoadingList></LoadingList>
+        }
+        else
+        {
+            <div>
+                <table class="table table-zebra">
+                    <thead>
+                    <tr>
+                        <th>@(ModelExtensions.ToDisplay<DepositUserResDto>(i => i.UserFullName))</th>
+                        <th>@(ModelExtensions.ToDisplay<DepositUserResDto>(i => i.StartAmount))</th>
+                        <th>@(ModelExtensions.ToDisplay<DepositUserResDto>(i => i.EndAmount))</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in _users)
+                    {
+                        <tr>
+                            <td>@item.UserFullName</td>
+                            <td>@item.StartAmount.ToNumeric()</td>
+                            <td>@item.EndAmount.ToNumeric()</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-action">
+
+                <form method="dialog">
+                    <button class="btn">بستن</button>
+                </form>
+            </div>
+        }
+    </div>
+</dialog>
+
+@if (_isLoading)
+{
+    <LoadingList/>
+}
+else
+{
+    <div class="sm:overflow-visible overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+        <table class="table table-zebra">
+            <thead>
+            <tr>
+                <th>ردیف</th>
+                <th>@(ModelExtensions.ToDisplay<DepositResDto>(i => i.StartDate))</th>
+                <th>@(ModelExtensions.ToDisplay<DepositResDto>(i => i.StartAmount))</th>
+                <th>@(ModelExtensions.ToDisplay<DepositResDto>(i => i.EndDate))</th>
+                <th>@(ModelExtensions.ToDisplay<DepositResDto>(i => i.EndAmount))</th>
+                <th>عملیات</th>
+            </tr>
+            </thead>
+            <tbody class="h-full">
+            @{
+                var index = 0;
+            }
+            @foreach (var item in _list)
+            {
+                <tr>
+                    <td class="w-14 text-center">@(++index)</td>
+                    <td>@item.StartDate.ToShamsi()</td>
+                    <td>@item.StartAmount.ToNumeric()</td>
+                    <td>@(item.EndDate.HasValue ? item.EndDate.Value.ToShamsi() : "-")</td>
+                    <td>@item.EndAmount.ToNumeric()</td>
+                    <td class="w-14 text-center">
+                        <div class="dropdown dropdown-left">
+                            <div tabindex="0" role="button" class="btn btn-sm btn-ghost">⋮</div>
+                            <ul tabindex="0"
+                                class="dropdown-content menu bg-base-100 rounded-box z-50 p-1 w-32 shadow">
+                                <li>
+                                    <button type="button" @onclick="() => ShowUsers(item.Id)">کابران</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            }
+
+            </tbody>
+        </table>
+    </div>
+
+    <Pagination Page="_indexDto.Page" Limit="_indexDto.Limit" Total="_total" PageChanged="PageChanged"></Pagination>
+}
