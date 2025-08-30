@@ -81,8 +81,8 @@ try
     builder.Services.AddBingX(options =>
     {
         options.ApiCredentials = new ApiCredentials(
-            "XUnyzKy7ABQyrOsYxDZxOX3CL4AUBJTu4MYNW3n5ljlveHHsriftHs40M9I3qkbvF9EKsxen0c2PiZAsoDQ",
-            "Lfxdc556KwbOVLkXCPclfvlnchxchf9HvRAvqIUC51e2Fgm7Fj9KSMSEIYdafn2Cg0OBjrH22uXSFSBGw5Q");
+            "",
+            "");
     });
 
     builder.Services.AddScoped<IHashEntityValidator, HashEntityValidator>();

@@ -1,4 +1,6 @@
 @page "/Coin/Index"
+@using Common.Utilities
+@using global::Shared.DTOs
 @rendermode InteractiveServer
 
 
@@ -6,6 +8,47 @@
 
 <DeleteWarning OnClick="Delete"></DeleteWarning>
 
+<dialog class="modal" id="dataModal">
+    <div class="modal-box w-11/12 max-w-5xl">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute left-2 top-2">✕</button>
+        </form>
+        <h3 class="text-lg font-bold">خرید ارز</h3>
+
+        @if (_modalIsBusy)
+        {
+        <LoadingList></LoadingList>
+        }
+        else
+        {
+        <EditForm Model="@_buyCoinDto" OnValidSubmit="HandleValidBuySubmit">
+            <DataAnnotationsValidator/>
+            <div class="grid grid-cols-3 gap-4 mt-3">
+
+                <fieldset class="fieldset w-full">
+                    <legend class="fieldset-legend">@(ModelExtensions.ToDisplay<BuyCoinDto>(i => i.Currency))</legend>
+                    <InputText @bind-Value="_buyCoinDto.Currency" class="input" readonly/>
+                    <ValidationMessage For="@(() => _buyCoinDto.Currency)"></ValidationMessage>
+                </fieldset>
+                <fieldset class="fieldset w-full">
+                    <legend class="fieldset-legend">@(ModelExtensions.ToDisplay<BuyCoinDto>(i => i.Amount))</legend>
+                    <InputNumber @bind-Value="_buyCoinDto.Amount" class="input" readonly/>
+                    <ValidationMessage For="@(() => _buyCoinDto.Amount)"></ValidationMessage>
+                </fieldset>
+            </div>
+            <div class="modal-action">
+
+                <form method="dialog">
+                    <button class="btn">بستن</button>
+                </form>
+                <LoadingBtn ButtonText="ثبت" CssClass="btn btn-primary" IsLoading="_isBusy"
+                            Type="submit"></LoadingBtn>
+            </div>
+        </EditForm>
+        }
+
+    </div>
+</dialog>
 @if (_isLoading)
 {
     <LoadingList/>
@@ -41,6 +84,7 @@ else
                     <p>@item.LoseLimit</p>
                     <p>@item.ProfitLimit</p>
                     <div class="justify-end card-actions">
+                        <button class="btn btn-primary" @onclick="">خرید</button>
                         <button class="btn btn-error" @onclick="() => ShowDeleteWarning(item.Id)">حذف</button>
                     </div>
                 </div>

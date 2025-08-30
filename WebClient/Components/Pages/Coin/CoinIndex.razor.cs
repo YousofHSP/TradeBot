@@ -12,6 +12,7 @@ public partial class CoinIndex : ComponentBase
     private List<CoinResDto> _list = [];
     private List<CoinResDto> _notStoredlist = [];
     private CoinDto _data = new();
+    private BuyCoinDto _buyCoinDto = new();
     private readonly IndexDto _indexDto = new();
     private Timer? _debounceTimer;
     private int _total;
@@ -111,5 +112,25 @@ public partial class CoinIndex : ComponentBase
     {
         await Js.InvokeVoidAsync("openModal", "deleteModal");
         _data = new() { Id = id };
+    }
+
+    private async Task HandleValidBuySubmit()
+    {
+        await Js.InvokeVoidAsync("closeModal", "buyModal");
+        _isLoading = true;
+        try
+        {
+            var deleteResult = await BaseService.Post<BuyCoinDto>($"v1/Coin/Buy");
+            if (deleteResult)
+            {
+                ToastService.ShowSuccess(" حذف شد");
+                await GetData();
+            }
+        }
+        finally
+        {
+            _data = new();
+            _isLoading = false;
+        }        
     }
 }
