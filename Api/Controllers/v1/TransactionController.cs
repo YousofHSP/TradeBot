@@ -2,6 +2,7 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Common.Exceptions;
+using Common.Utilities;
 using Data.Contracts;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
@@ -31,8 +32,25 @@ public class TransactionController(
     }
 
     [HttpPost("[action]")]
-    public async Task<ApiResult> StartDeposit(CancellationToken cancellationToken)
+    public async Task<ApiResult> SetDeposit(CancellationToken ct)
     {
+        var check= await depositRepository.TableNoTracking
+            .Include(i => i.DepositUsers)
+            .AnyAsync(i => i.EndAmount == null, ct);
+        if (check)
+        {
+            await EndDeposit(ct);
+        }else
+        {
+            await StartDeposit(ct);
+        }
+
+        return Ok();
+
+    }
+    private async Task StartDeposit(CancellationToken cancellationToken)
+    {
+        
         var transactions = await transactionRepository.TableNoTracking
             .ToListAsync(cancellationToken);
 
@@ -41,10 +59,12 @@ public class TransactionController(
         if (accountAmount != amount)
             throw new InvalidDataException("مقدار حساب سیستم با مقدار صرافی یکی نیست");
 
+        var userId = User.Identity!.GetUserId<int>();
         var deposit = new Deposit()
         {
             StartDate = DateTimeOffset.Now,
-            StartAmount = amount
+            StartAmount = amount,
+            CreatorUserId = userId
         };
         var depositUsers = new List<DepositUser>();
         var newTransactions = new List<Transaction>();
@@ -55,6 +75,7 @@ public class TransactionController(
                 UserId = items.Key,
                 CreateDate = DateTimeOffset.Now,
                 StartAmount = transactions.Sum(i => i.Amount),
+                CreatorUserId = userId
             });
 
             newTransactions.Add(new Transaction()
@@ -62,18 +83,17 @@ public class TransactionController(
                 Amount = transactions.Sum(i => i.Amount) * -1,
                 CreateDate= DateTimeOffset.Now,
                 Type = TransactionType.Deposit,
-                UserId = items.Key
+                UserId = items.Key,
+                CreatorUserId = userId
             });
         }
 
         deposit.DepositUsers = depositUsers;
         await depositRepository.AddAsync(deposit, cancellationToken, false);
         await transactionRepository.AddRangeAsync(newTransactions, cancellationToken);
-        return Ok();
     }
 
-    [HttpGet("[action]")]
-    public async Task<ApiResult> EndDeposit(CancellationToken cancellationToken)
+    private async Task EndDeposit(CancellationToken cancellationToken)
     {
         var deposit = await depositRepository.TableNoTracking
             .Include(i => i.DepositUsers)
@@ -101,6 +121,5 @@ public class TransactionController(
 
         await depositRepository.UpdateAsync(deposit, cancellationToken, false);
         await transactionRepository.AddRangeAsync(transactions, cancellationToken);
-        return Ok();
     }
 }

@@ -29,6 +29,7 @@ public class DepositController(
         
         var total = await query.CountAsync(ct);
         var list = await query
+            .OrderByDescending(i => i.Id)
             .Skip((dto.Page - 1) * dto.Limit)
             .Take(dto.Limit)
             .ProjectTo<DepositResDto>(mapper.ConfigurationProvider)

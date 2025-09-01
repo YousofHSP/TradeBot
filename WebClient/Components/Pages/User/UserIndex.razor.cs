@@ -13,6 +13,7 @@ public partial class UserIndex : ComponentBase
     private List<UserResDto> _list = [];
     private List<SelectDto> _userGroups = [];
     private readonly IndexDto _indexDto = new();
+    private AccountChargeDto _accountChargeDto = new();
     private UserDto _data = new();
     private bool _isLoading = true;
     private bool _isBusy;
@@ -123,6 +124,14 @@ public partial class UserIndex : ComponentBase
         {
             _modalIsBusy = false;
         }
+    }
+
+    private async Task ShowAccountChargeModal(int id)
+    {
+        _accountChargeDto.UserId = id;
+        await Js.InvokeVoidAsync("openModal", "chargeAccountModal");
+        StateHasChanged();
+        
     }
 
     private async Task ShowDeleteWarning(int id)

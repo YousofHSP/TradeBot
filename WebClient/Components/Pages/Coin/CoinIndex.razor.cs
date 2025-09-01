@@ -114,16 +114,26 @@ public partial class CoinIndex : ComponentBase
         _data = new() { Id = id };
     }
 
+    private async Task ShowBuyModal(CoinResDto coin)
+    {
+        _buyCoinDto = new()
+        {
+            Currency = coin.Currency,
+            Amount = 0,
+            Price = 0
+        };
+        await Js.InvokeVoidAsync("openModal", "buyModal");
+    }
     private async Task HandleValidBuySubmit()
     {
         await Js.InvokeVoidAsync("closeModal", "buyModal");
         _isLoading = true;
         try
         {
-            var deleteResult = await BaseService.Post<BuyCoinDto>($"v1/Coin/Buy");
-            if (deleteResult)
+            var result = await BaseService.Post("v1/Coin/Buy", _buyCoinDto);
+            if (result)
             {
-                ToastService.ShowSuccess(" حذف شد");
+                ToastService.ShowSuccess("عملیات با موفقیت انجام شد");
                 await GetData();
             }
         }

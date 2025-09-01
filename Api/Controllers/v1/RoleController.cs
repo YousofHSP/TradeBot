@@ -24,7 +24,7 @@ namespace Api.Controllers.v1
         private readonly IMapper _mapper;
         protected override IQueryable<Role> setSearch(string? search, IQueryable<Role> query)
         {
-            query = query.Where(i => i.Name != "Admin");
+            query = query.Where(i => i.Name != "Administrator");
             if (string.IsNullOrWhiteSpace(search)) return query;
             query = query.Where(i => i.Title.Contains(search) || i.Name.Contains(search));
             return query;
@@ -114,7 +114,7 @@ namespace Api.Controllers.v1
         public override async Task<ApiResult<List<SelectDto>>> GetSelectList(CancellationToken cancellationToken)
         {
             var list = await _roleRepository.TableNoTracking
-                .Where(i => i.Name != "Admin")
+                .Where(i => i.Name != "Administrator")
                 .ToListAsync(cancellationToken);
             return Ok(list.Select(i => new SelectDto { Id = i.Id, Title = i.Title}).ToList());
         }

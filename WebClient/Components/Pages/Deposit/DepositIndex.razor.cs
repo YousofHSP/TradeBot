@@ -13,6 +13,7 @@ public partial class DepositIndex : ComponentBase
     private List<DepositUserResDto> _users = [];
     private bool _isLoading = true;
     private bool _modalIsBusy;
+    private bool _setDepositLoading;
     private string _modalTitle = "";
     private int _total;
 
@@ -76,5 +77,25 @@ public partial class DepositIndex : ComponentBase
         {
             _modalIsBusy = false;
         }
+    }
+
+    private async Task SetDeposit()
+    {
+        try
+        {
+            _setDepositLoading = true;
+            var result = await BaseService.Post("v1/Transaction/SetDeposit");
+            if (result)
+            {
+                ToastService.ShowSuccess("سرمایه گذاری ثبت شد");
+
+                await GetData();
+            }
+        }
+        finally
+        {
+            _setDepositLoading = false;
+        }
+        
     }
 }

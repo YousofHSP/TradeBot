@@ -36,9 +36,17 @@ public class BaseService : IBaseService
             var response = await result.Content.ReadFromJsonAsync<ApiResult<TResDto>>();
             if (response is null)
                 throw new Exception("خطا در تبدیل اطلاعات");
+            if (response.statusCode is ApiResultStatusCode.PaymentRequired)
+                throw new LogicException(response.message);
             if (!response.isSuccess)
                 throw new Exception(response.message);
             return response.Data;
+        }
+        catch (LogicException e)
+        {
+            _toastService.ShowError(e.Message);
+            NavManager.NavigateTo("/License", true);
+            return null;
         }
         catch (Exception e)
         {
@@ -46,6 +54,65 @@ public class BaseService : IBaseService
             return null;
         }
     }
+    public async Task<bool> Get(string uri)
+    {
+        try
+        {
+
+            await SetHeaders();
+            var result = await _httpClient.GetAsync(uri);
+            if (result.StatusCode is HttpStatusCode.InternalServerError)
+                throw new Exception("خطا در دریافت اطلاعات");
+            var response = await result.Content.ReadFromJsonAsync<ApiResult>();
+            if (response is null)
+                throw new Exception("خطا در تبدیل اطلاعات");
+            if (response.statusCode is ApiResultStatusCode.PaymentRequired)
+                throw new LogicException(response.message);
+            if (!response.isSuccess)
+                throw new Exception(response.message);
+            return true;
+        }
+        catch (LogicException e)
+        {
+            _toastService.ShowError(e.Message);
+            NavManager.NavigateTo("/License", true);
+            return false;
+        }
+        catch (Exception e)
+        {
+            _toastService.ShowError(e.Message);
+            return false;
+        }
+    }
+    public async Task<byte[]?> GetFile(string uri)
+    {
+        try
+        {
+            await SetHeaders();
+
+            var result = await _httpClient.GetAsync(uri);
+
+            if (result.StatusCode is HttpStatusCode.InternalServerError)
+                throw new Exception("خطا در دریافت فایل");
+
+            if (!result.IsSuccessStatusCode)
+                throw new Exception("دانلود فایل با خطا مواجه شد");
+
+            return await result.Content.ReadAsByteArrayAsync();
+        }
+        catch (LogicException e)
+        {
+            _toastService.ShowError(e.Message);
+            NavManager.NavigateTo("/License", true);
+            return null;
+        }
+        catch (Exception e)
+        {
+            _toastService.ShowError(e.Message);
+            return null;
+        }
+    }
+
     public async Task<bool> Delete(string uri)
     {
         try
@@ -58,9 +125,17 @@ public class BaseService : IBaseService
             var response = await result.Content.ReadFromJsonAsync<ApiResult>();
             if (response is null)
                 throw new Exception("خطا در تبدیل اطلاعات");
+            if (response.statusCode is ApiResultStatusCode.PaymentRequired)
+                throw new LogicException(response.message);
             if (!response.isSuccess)
                 throw new Exception(response.message);
             return true;
+        }
+        catch (LogicException e)
+        {
+            _toastService.ShowError(e.Message);
+            NavManager.NavigateTo("/License", true);
+            return false;
         }
         catch (Exception e)
         {
@@ -86,10 +161,18 @@ public class BaseService : IBaseService
                 throw new Exception("خطا در تبدیل اطلاعات");
             if (response.statusCode is ApiResultStatusCode.UnAuthorized)
                 throw new UnauthorizedAccessException(response.message);
+            if (response.statusCode is ApiResultStatusCode.PaymentRequired)
+                throw new LogicException(response.message);
             if (!response.isSuccess)
                 throw new Exception(response.message);
 
             return response.Data;
+        }
+        catch (LogicException e)
+        {
+            _toastService.ShowError(e.Message);
+            NavManager.NavigateTo("/License", true);
+            return null;
         }
         catch (UnauthorizedAccessException e)
         {
@@ -119,6 +202,8 @@ public class BaseService : IBaseService
                 throw new Exception("خطا در تبدیل اطلاعات");
             if (response.statusCode is ApiResultStatusCode.UnAuthorized)
                 throw new UnauthorizedAccessException(response.message);
+            if (response.statusCode is ApiResultStatusCode.PaymentRequired)
+                throw new LogicException(response.message);
             if (!response.isSuccess)
                 throw new Exception(response.message);
 
@@ -143,5 +228,87 @@ public class BaseService : IBaseService
         GetHttpClient().DefaultRequestHeaders.Authorization =
             new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
         
+    }
+
+    public async Task<bool> Post<TDto>(string uri, TDto dto)
+    {
+        try
+        {
+            await SetHeaders();
+
+            var result = await _httpClient.PostAsJsonAsync(uri, dto);
+
+            if (result.StatusCode is HttpStatusCode.InternalServerError)
+                throw new Exception("خطا در دریافت اطلاعات");
+            var response = await result.Content.ReadFromJsonAsync<ApiResult>();
+            if (response is null)
+                throw new Exception("خطا در تبدیل اطلاعات");
+            if (response.statusCode is ApiResultStatusCode.UnAuthorized)
+                throw new UnauthorizedAccessException(response.message);
+            if (response.statusCode is ApiResultStatusCode.PaymentRequired)
+                throw new LogicException(response.message);
+            if (!response.isSuccess)
+                throw new Exception(response.message);
+
+            return true;
+        }
+        catch (LogicException e)
+        {
+            _toastService.ShowError(e.Message);
+            NavManager.NavigateTo("/License", true);
+            return false;
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            _toastService.ShowError(e.Message);
+            var returnUrl = Uri.EscapeDataString(NavManager.Uri);
+            NavManager.NavigateTo($"/Auth/Login?returnUrl={returnUrl}", true);
+            return false;
+        }
+        catch (Exception e)
+        {
+            _toastService.ShowError(e.Message);
+            return false;
+        }
+    }
+    public async Task<bool> Post(string uri)
+    {
+        try
+        {
+            await SetHeaders();
+            var result = await _httpClient.PostAsync(uri, null);
+
+            if (result.StatusCode is HttpStatusCode.InternalServerError)
+                throw new Exception("خطا در دریافت اطلاعات");
+            var response = await result.Content.ReadFromJsonAsync<ApiResult>();
+            if (response is null)
+                throw new Exception("خطا در تبدیل اطلاعات");
+            if (response.statusCode is ApiResultStatusCode.UnAuthorized)
+                throw new UnauthorizedAccessException(response.message);
+            if (response.statusCode is ApiResultStatusCode.PaymentRequired)
+                throw new LogicException(response.message);
+            if (!response.isSuccess)
+                throw new Exception(response.message);
+
+            return true;
+        }
+        catch (LogicException e)
+        {
+            _toastService.ShowError(e.Message);
+            NavManager.NavigateTo("/License", true);
+            return false;
+        }
+        catch (UnauthorizedAccessException e)
+        {
+            _toastService.ShowError(e.Message);
+            var returnUrl = Uri.EscapeDataString(NavManager.Uri);
+            NavManager.NavigateTo($"/Auth/Login?returnUrl={returnUrl}", true);
+            return false;
+        }
+        catch (Exception e)
+        {
+            _toastService.ShowError(e.Message);
+            return false;
+        }
     }
 }

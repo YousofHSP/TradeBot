@@ -899,15 +899,16 @@ public class UserController(
             if (dto.Amount > userBalance)
                 throw new AppException(ApiResultStatusCode.PaymentRequired, "موجودی کاربر کافی نیست");
         }
-            
-        
 
 
+
+        var userId = User.Identity!.GetUserId<int>();
         var transaction = new Transaction
         {
             UserId = user.Id,
             Type = dto.Type,
-            Amount = dto.Amount
+            Amount = dto.Amount,
+            CreatorUserId = userId
         };
         await transactionRepository.AddAsync(transaction, cancellationToken);
 

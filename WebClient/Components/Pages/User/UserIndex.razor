@@ -9,6 +9,7 @@
 <PageTitle>لیست کاربران</PageTitle>
 
 <DeleteWarning OnClick="Delete"></DeleteWarning>
+<ChargeAccountModal AccountChargeDto="_accountChargeDto"/>
     <dialog class="modal" id="dataModal">
     <div class="modal-box w-11/12 max-w-5xl">
         <form method="dialog">
@@ -136,6 +137,7 @@ else
                 <th>نام</th>
                 <th>گروه کاری</th>
                 <th>نام کاربری</th>
+                <th>شارژ حساب</th>
                 <th>وضعیت</th>
                 <th>عملیات</th>
             </tr>
@@ -162,6 +164,7 @@ else
                     <td>@item.FirstName @item.LastName</td>
                     <td>@item.UserGroups</td>
                     <td>@item.UserName</td>
+                    <td>@item.AccountCharge</td>
                     <td>
                         @if (item.Status == UserStatus.Disable)
                         {
@@ -196,6 +199,9 @@ else
                                 class="dropdown-content menu bg-base-100 rounded-box z-50 p-1 w-32 shadow">
                                 <li>
                                     <button type="button" @onclick="() => ShowEditModal(item.Id)">ویرایش</button>
+                                </li>
+                                <li>
+                                    <button type="button" @onclick="() => ShowAccountChargeModal(item.Id)">شارژ</button>
                                 </li>
                                 <hr class="-mx-1 my-1">
                                 <li>

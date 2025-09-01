@@ -100,18 +100,18 @@ public class CoinController(
         if(deposit is null)
             throw new NotFoundException("سرمایه گذاری فعالی یافت نشد");
 
-        var result = await exchange.PlaceOrder(
-            coin,
-            leverage: 3,
-            ct);
-        if (result == 0)
-            return new ApiResult(false, ApiResultStatusCode.ServerError);
-        var order = new Order
-        {
-            OrderId = result,
-            Currency = dto.Currency,
-        };
-        await orderRepository.AddAsync(order, ct);
+        // var result = await exchange.PlaceOrder(
+        //     coin,
+        //     leverage: 3,
+        //     ct);
+        // if (result == 0)
+        //     return new ApiResult(false, ApiResultStatusCode.ServerError);
+        // var order = new Order
+        // {
+        //     OrderId = result,
+        //     Currency = dto.Currency,
+        // };
+        // await orderRepository.AddAsync(order, ct);
         
         return Ok();
     }

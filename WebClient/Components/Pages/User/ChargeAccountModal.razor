@@ -1,0 +1,62 @@
+@using Common.Utilities
+@using Domain.Entities
+@using global::Shared.DTOs
+@using WebClient.Services.Common
+@using WebClient.Services.Components
+@inject IBaseService BaseService
+@inject IJSRuntime JS
+@inject ToastService Toast
+
+<dialog class="modal" id="chargeAccountModal">
+    <div class="modal-box">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute left-2 top-2">✕</button>
+        </form>
+        <h3 class="text-lg font-bold">شارژ حساب</h3>
+        <EditForm Model="@AccountChargeDto" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator/>
+            <div class="grid grid-cols-3 gap-4 mt-3">
+
+                <fieldset class="fieldset w-full">
+                    <legend
+                        class="fieldset-legend">@(ModelExtensions.ToDisplay<AccountChargeDto>(i => i.Amount))</legend>
+                    <InputNumber @bind-Value="AccountChargeDto.Amount" class="input" />
+                    <ValidationMessage For="@(() => AccountChargeDto.Amount)"></ValidationMessage>
+                </fieldset>
+                <fieldset class="fieldset w-full">
+                    <legend
+                        class="fieldset-legend">@(ModelExtensions.ToDisplay<AccountChargeDto>(i => i.Type))</legend>
+                    <SelectInput @bind-Value="AccountChargeDto.Type" Options="@(EnumExtensions.ToSelectDto<TransactionType>())"/>
+                    <ValidationMessage For="@(() => AccountChargeDto.Type)"></ValidationMessage>
+                </fieldset>
+            </div>
+            <div class="modal-action">
+                <form method="dialog">
+                    <button class="btn">بستن</button>
+                </form>
+                <LoadingBtn CssClass="btn btn-primary" IsLoading="_isBusy" Type="submit"></LoadingBtn>
+
+            </div>
+        </EditForm>
+    </div>
+</dialog>
+
+@code {
+    private bool _isBusy;
+    [Parameter] public AccountChargeDto AccountChargeDto { get; set; }
+
+
+    private async Task HandleValidSubmit()
+    {
+        _isBusy = true;
+        var result = await BaseService.Post("v1/User/AccountCharge", AccountChargeDto);
+        if (result)
+        {
+            await JS.InvokeVoidAsync("closeModal", "chargeAccountModal");
+            Toast.ShowSuccess("اطلاعات با موفقیت ثبت شد");
+        }
+
+        _isBusy = false;
+    }
+
+}

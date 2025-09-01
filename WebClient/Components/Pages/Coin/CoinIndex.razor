@@ -8,7 +8,7 @@
 
 <DeleteWarning OnClick="Delete"></DeleteWarning>
 
-<dialog class="modal" id="dataModal">
+<dialog class="modal" id="buyModal">
     <div class="modal-box w-11/12 max-w-5xl">
         <form method="dialog">
             <button class="btn btn-sm btn-circle btn-ghost absolute left-2 top-2">✕</button>
@@ -32,7 +32,7 @@
                 </fieldset>
                 <fieldset class="fieldset w-full">
                     <legend class="fieldset-legend">@(ModelExtensions.ToDisplay<BuyCoinDto>(i => i.Amount))</legend>
-                    <InputNumber @bind-Value="_buyCoinDto.Amount" class="input" readonly/>
+                    <InputNumber @bind-Value="_buyCoinDto.Amount" class="input"/>
                     <ValidationMessage For="@(() => _buyCoinDto.Amount)"></ValidationMessage>
                 </fieldset>
             </div>
@@ -55,7 +55,7 @@
 }
 else
 {
-    <div class="flex gap-3">
+    <div class="grid grid-cols-3 gap-3">
         <label class="input">
             <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                 <g
@@ -73,10 +73,10 @@ else
         </label>
     </div>
 
-    <div class="grid grid-cols-4 gap-3 mt-3">
+    <div class="grid grid-cols-3 gap-3 mt-3">
         @foreach (var item in _list)
         {
-            <div class="card w-96 bg-base-100 card-md shadow-sm">
+            <div class="card w-96 bg-base-100 card-md shadow-sm mt-3">
                 <div class="card-body">
                     <h2 class="card-title">@item.Name</h2>
                     <p>@item.Currency</p>
@@ -84,7 +84,7 @@ else
                     <p>@item.LoseLimit</p>
                     <p>@item.ProfitLimit</p>
                     <div class="justify-end card-actions">
-                        <button class="btn btn-primary" @onclick="">خرید</button>
+                        <button class="btn btn-primary" @onclick="() => ShowBuyModal(item)">خرید</button>
                         <button class="btn btn-error" @onclick="() => ShowDeleteWarning(item.Id)">حذف</button>
                     </div>
                 </div>
@@ -93,8 +93,8 @@ else
 
 
     </div>
-    <hr class="my-3" />
-    <div class="grid grid-cols-4 gap-3 ">
+    <hr class="my-5 " />
+    <div class="grid grid-cols-3 gap-3 ">
         @foreach (var item in _notStoredlist)
         {
             <NotStoredCoin Item="item" Done="GetData"/>
